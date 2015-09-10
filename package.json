@@ -1,0 +1,32 @@
+{
+    "version": "0.0.1",
+    "name": "hwa-server",
+    "title": "HWA Deployment Tool Server",
+    "description": "Server for deploying HWAs in conjunction with the HWA-CLI tool.",
+    "preferGlobal": true,
+    "bin": {
+        "hwa": "main.js"
+    },
+    "author": {
+        "name": "Sean Xu",
+        "url": "https://github.com/jseanxu"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jseanxu/hwa-server"
+    },
+    "bugs": "https://github.com/jseanxu/hwa-server/issues",
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/jseanxu/appx-server/blob/master/LICENSE"
+        }
+    ],
+    "dependencies": {
+        "appx-tools": "^0.0.4",
+        "adm-zip": "^0.4.7",
+        "archiver": "^0.15.0",
+        "rimraf": "^2.4.3"
+    },
+    "os": [ "win32" ]
+}
