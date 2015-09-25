@@ -1,3 +1,4 @@
+import cp = require("child_process");
 import fs = require("fs");
 import net = require("net");
 import os = require("os");
@@ -27,8 +28,8 @@ function cleanTemp() {
     fs.mkdirSync(rootTempPath);
 }
 
-cleanTemp();
 appxTools.terminateAppx();
+cleanTemp();
 
 function processInitialData(buffer: Buffer) {
     // Raw data format: 'version;command;data'
@@ -93,8 +94,22 @@ export function main(argv: string[], argc: number) {
     var server = net.createServer();
     server.listen(PORT);
     console.log("Creating server on port " + PORT);
+
+    var clientAddress: string;
     server.on("connection", (socket: net.Socket) => {
+        if (clientAddress) {
+            if (socket.remoteAddress !== clientAddress) {
+                verbose && console.log("Connection from unknown client, disconnecting...");
+                socket.destroy();
+                return;
+            }
+        } else {
+            console.log("First client connection, binding to: " + socket.remoteAddress);
+            clientAddress = socket.remoteAddress;
+        }
+
         var payload: { version: number; command: string; dataLength: number; data: Buffer; };
+        socket.write("ACK");
 
         socket.on("data", (buffer: Buffer) => {
             if (!payload) {
@@ -156,7 +171,12 @@ export function main(argv: string[], argc: number) {
                     break;
 
                 case "launchAppx":
-                    appxTools.launchAppx();
+                    try {
+                        appxTools.launchAppx();
+                    } catch (e) {
+                        // An exception will be thrown if we try to launch
+                        // without first installing the app
+                    }
                     break;
 
                 default:
